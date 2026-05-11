@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+env/
+Flask_Yolo/venv/
+
+# YOLO
+dataset/
+runs/
+*.pt
+*.onnx
+*.cache
+
+# Test images
+Flask_Yolo/*.jpg
+Flask_Yolo/static/result.jpg
+
+# Laravel upload files
+Pencarian-buku/public/images/cover/
+Pencarian-buku/public/images/rak/
+
+# Laravel
+Pencarian-buku/vendor/
+Pencarian-buku/node_modules/
+Pencarian-buku/.env
+
+# IDE
+.vscode/
+
+# Windows
+Thumbs.db

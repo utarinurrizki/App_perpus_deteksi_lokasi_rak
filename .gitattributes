@@ -1,0 +1,8 @@
+* text=auto
+
+*.php text
+*.blade.php text
+*.py text
+*.js text
+*.css text
+*.html text
