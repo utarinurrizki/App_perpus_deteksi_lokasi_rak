@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('racks', function (Blueprint $table) {
             $table->id();
             $table->string('nama_rak', 100);
-            $table->string('lokasi', 255);
-            $table->string('gambar_rak', 255)->nullable(); // hasil YOLO
+            $table->string('zona', 255);
+            $table->integer('baris')->nullable();
+            $table->integer('sekat_mulai')->nullable();
+            $table->integer('sekat_selesai')->nullable();
+            // $table->string('gambar_rak', 255)->nullable(); // hasil YOLO
             $table->timestamps(); // created_at & updated_at
         });
     }

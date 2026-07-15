@@ -8,7 +8,9 @@ class Rack extends Model
 {
     protected $fillable = [
         'nama_rak',
-        'lokasi',
-        'gambar_rak'
+        'zona',
+        'baris',
+        'sekat_mulai',
+        'sekat_selesai'
     ];
 }

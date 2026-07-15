@@ -6,7 +6,7 @@
 <div class="card shadow-sm p-4">
     <h4 class="mb-4">Edit Data Buku</h4>
 
-    <form action="/admin/{{ $book->id }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.books.update', $book->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -65,12 +65,24 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label>Rak</label>
-                <select name="rak_id" class="form-select">
+                <label>Klasifikasi</label>
+                <select name="rak_id" class="form-select" required>
+                    <option value="">-- Pilih Klasifikasi --</option>
                     @foreach($racks as $rack)
-                        <option value="{{ $rack->id }}" {{ $rack->id == $book->rak_id ? 'selected' : '' }}>
+                      <option value="{{ $rack->id }}"
+                            {{ old('rak_id', $book->rak_id) == $rack->id ? 'selected' : '' }}>
+
                             {{ $rack->nama_rak }}
-                        </option>
+                            |
+                            Zona {{ $rack->zona }}
+                            |
+                            Baris {{ $rack->baris }}
+                            |
+                            Sekat {{ $rack->sekat_mulai }}
+                            @if($rack->sekat_mulai != $rack->sekat_selesai)
+                                - {{ $rack->sekat_selesai }}
+                            @endif
+            </option>
                     @endforeach
                 </select>
             </div>

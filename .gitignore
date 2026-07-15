@@ -32,3 +32,8 @@ Pencarian-buku/.env
 
 # Windows
 Thumbs.db
+
+# Video
+*.mp4
+*.avi
+*.mov

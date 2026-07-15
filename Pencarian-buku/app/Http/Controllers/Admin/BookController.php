@@ -1,48 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Book;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Models\Rack;
 use Illuminate\Support\Facades\File;
 
-class AdminController extends Controller
+class BookController extends Controller
 {
-    public function index()
+    public function create()
     {
-        return $this->dashboard();
-    }
-
-    public function dashboard()
-    {
-        $books = Book::latest()->get();
-        $racks = DB::table('racks')->select('id', 'nama_rak', 'lokasi')->get();
-        $latestBooks = $books->take(5);
-
-        $stats = [
-            'total_buku' => $books->count(),
-            'total_rak' => $racks->count(),
-            'buku_tanpa_cover' => $books->whereNull('cover')->count(),
-            'kategori_unik' => $books->pluck('kategori')->filter()->unique()->count(),
-        ];
-
-        return view('admin.dashboard', compact('stats', 'latestBooks'));
-    }
-
-    public function books()
-    {
-        $books = Book::latest()->get();
-        $racks = DB::table('racks')->select('id', 'nama_rak', 'lokasi')->get();
-
-        return view('admin.books', compact('books', 'racks'));
-    }
-
-    public function members()
-    {
-        $members = User::latest()->get();
-        return view('admin.members', compact('members'));
+        $racks = Rack::all();
+        return view('admin.book.create', compact('racks'));
     }
 
     public function store(Request $request)
@@ -59,7 +30,7 @@ class AdminController extends Controller
             'tahun' => 'nullable|digits:4|integer',
             'kategori' => 'nullable|string|max:100',
             'rak_id' => 'required|exists:racks,id',
-            'cover' => 'nullable|image|max:2048',
+            'cover' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $filename = null;
@@ -75,6 +46,8 @@ class AdminController extends Controller
             $file->move($destination, $filename);
         }
 
+        $jumlah = (int) ($request->jumlah_buku ?? 0);
+
         Book::create([
             'judul' => $validated['judul'],
             'pengarang' => $validated['pengarang'],
@@ -83,7 +56,7 @@ class AdminController extends Controller
             'jumlah_halaman' => $request->jumlah_halaman,
             'edisi' => $request->edisi,
             'jumlah_buku' => $request->jumlah_buku,
-            // 'status' => $validated['status'],
+            'status' => $jumlah > 0 ? 'tersedia' : 'tidak tersedia',
             'tahun' => $validated['tahun'] ?? null,
             'kategori' => $validated['kategori'] ?? null,
             'rak_id' => $validated['rak_id'],
@@ -91,6 +64,12 @@ class AdminController extends Controller
         ]);
 
         return redirect('/admin/books')->with('success', 'Data buku berhasil disimpan.');
+    }
+
+    public function edit(Book $book)
+    {
+        $racks = Rack::all();
+        return view('admin.book.edit', compact('book', 'racks'));
     }
 
     public function update(Request $request, Book $book)
@@ -107,7 +86,7 @@ class AdminController extends Controller
             'tahun' => 'nullable|digits:4|integer',
             'kategori' => 'nullable|string|max:100',
             'rak_id' => 'required|exists:racks,id',
-            'cover' => 'nullable|image|max:2048',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $filename = $book->cover;
@@ -128,6 +107,8 @@ class AdminController extends Controller
             $file->move($destination, $filename);
         }
 
+        $jumlah = (int) ($request->jumlah_buku ?? 0);
+
         $book->update([
             'judul' => $validated['judul'],
             'pengarang' => $validated['pengarang'],
@@ -136,14 +117,14 @@ class AdminController extends Controller
             'jumlah_halaman' => $request->jumlah_halaman,
             'edisi' => $request->edisi,
             'jumlah_buku' => $request->jumlah_buku,
-            // 'status' => $validated['status'],
+            'status' => $jumlah > 0 ? 'tersedia' : 'tidak tersedia',
             'tahun' => $validated['tahun'] ?? null,
             'kategori' => $validated['kategori'] ?? null,
             'rak_id' => $validated['rak_id'],
             'cover' => $filename,
         ]);
 
-        return redirect('/admin/books')->with('success', 'Data buku berhasil diperbarui.');
+        return redirect('/admin/books')->with('success', 'Data buku berhasil diubah.');
     }
 
     public function destroy(Book $book)
@@ -157,5 +138,4 @@ class AdminController extends Controller
 
         return redirect('/admin/books')->with('success', 'Data buku berhasil dihapus.');
     }
-
 }
